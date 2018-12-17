@@ -1,6 +1,8 @@
 (function (modules) { // webpackBootstrap
+
   // install a JSONP callback for chunk loading
   function webpackJsonpCallback(data) {
+    debugger
     var chunkIds = data[0];
     var moreModules = data[1];
 
@@ -20,8 +22,25 @@
         modules[moduleId] = moreModules[moduleId];
       }
     }
+
+    //window["webpackJsonp"] =jsonpArray= []
+    // parentJsonpFunction就是那个数组的push方法
+    //[]的push被改成了webpackJsonpCallback
     if (parentJsonpFunction) parentJsonpFunction(data);
 
+    //require.e返回的是一个promise.all,所以这里全部resolve后，才能
+    //执行then里的webpackRequire.bind(null,"./src/click.js")
+    /*
+    window.app.addEventListener('click', function () {
+    webpackRequire
+    .e(0)
+    .then(webpackRequire.bind(null,"./src/click.js"))
+    .then((param) => {
+        console.log(param);
+    })
+    })
+    //# sourceURL=webpack:///./src/index.js?
+    * */
     while (resolves.length) {
       resolves.shift()();
     }
@@ -48,7 +67,7 @@
 
   // The require function
   function webpackRequire(moduleId) {
-
+    console.log(modules);
     // Check if module is in cache
     if (installedModules[moduleId]) {
       return installedModules[moduleId].exports;
@@ -107,6 +126,7 @@
         }
         script.src = jsonpScriptSrc(chunkId);
 
+        //完成后马上就会执行jsonp请求过来的js文件，此处是0.bundle.js
         onScriptComplete = function (event) {
           // avoid mem leaks in IE.
           script.onerror = script.onload = null;
@@ -142,14 +162,19 @@
 
   // define getter function for harmony exports
   webpackRequire.d = function (exports, name, getter) {
+    //o->own 是否拥有  exports上是否拥有name，没有就定义一个
     if (!webpackRequire.o(exports, name)) {
       Object.defineProperty(exports, name, {enumerable: true, get: getter});
     }
   };
 
   // define __esModule on exports
+  //在导出对象上，定义__esModule
   webpackRequire.r = function (exports) {
     if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+      // obj.toString -> [object, Object]
+      // obj[Symbol.toStringTag] = 'BBBB'
+      // obj.toString -> [object, BBBB]
       Object.defineProperty(exports, Symbol.toStringTag, {value: 'Module'});
     }
     Object.defineProperty(exports, '__esModule', {value: true});
@@ -202,6 +227,7 @@
 
   var jsonpArray = window["webpackJsonp"] = window["webpackJsonp"] || [];
   var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
+  //覆盖push方法，改成了webpackJsonpCallback
   jsonpArray.push = webpackJsonpCallback;
   jsonpArray = jsonpArray.slice();
   for (var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
