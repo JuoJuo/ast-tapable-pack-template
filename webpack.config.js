@@ -9,6 +9,19 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
     },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        plugins:[['import',{library:'lodash'}]]
+                    }
+                }
+            }
+        ]
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: './index.html',
