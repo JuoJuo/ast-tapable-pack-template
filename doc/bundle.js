@@ -238,11 +238,23 @@
   return webpackRequire(webpackRequire.s = "./src/index.js");
 })
 ({
-  "./src/index.js":
-    (function (module, exports, webpackRequire) {
-
-      eval("window.app.addEventListener('click', function () {\r\n    webpackRequire.e(/*! import() */ 0).then(webpackRequire.bind(null, /*! ./click.js */ \"./src/click.js\")).then((param) => {\r\n        console.log(param);\r\n    })\r\n})\n\n//# sourceURL=webpack:///./src/index.js?");
-
-    })
-
+  "./src/index.js": (function (module, exports, webpackRequire) {
+              eval(`
+                  window.app.addEventListener('click', function () {
+                    webpackRequire.e(/*! import() */ 0)
+                      .then(webpackRequire.bind(null, /*! ./click.js */ "./src/click.js"))
+                      .then((param) => {
+                          console.log(param);
+                      })
+                  })
+            
+                  //# sourceURL=webpack:///./src/index.js?
+               `);
+  })
 });
+
+// installedChunks是已经eval过的，或者说执行过webpackrequire的chunk，里面存的id跟导出对象，
+// webpackRequire.e请求动态加载的代码块，返回的是Prmomise，里面异步加载动态的js，是创建一个script，赋值src然后appnend到head，然后installedChunks[id] = [resolve， reject， promise]
+// 当js请求回来了，脚本会立即执行webpackJsonpCallBack，传递了module的id跟闭包代码块，然后在里面吧installedChunks[id]里的promise给resolve了，
+// 于是 webpackRequire.e(/*! import() */ 0).then(webpackRequire.bind(null, /*! ./click.js */ "./src/click.js"))这个就去eval安装这个js
+// 完了就可以再then了
