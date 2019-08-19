@@ -1,5 +1,5 @@
 {
-  "name": "pack-source",
+  "name": "ast-tapable-pack-template",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
